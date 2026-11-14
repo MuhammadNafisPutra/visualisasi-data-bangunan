@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+~$*
+
+# Hasil buatan ulang (dibuat oleh buat_poster.py, ukurannya besar)
+poster/poster.html
+
+# Streamlit
+.streamlit/secrets.toml
