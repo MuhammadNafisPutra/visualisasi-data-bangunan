@@ -1,3 +1,4 @@
+import re
 """Tujuh visualisasi (sesuai Tabel 6 laporan UTS), dipakai bersama oleh dashboard (app.py) dan poster (buat_poster.py).
 
 Setiap fungsi menerima DataFrame dan mengembalikan plotly Figure.
@@ -31,13 +32,14 @@ C_HUNI = {"Berpenghuni": "#4C9F70", "Dipakai usaha": "#2F6690", "Kosong": "#8E6C
 C_KAYU, C_BATA = "#9C6B3F", "#2F6690"
 SKALA_PETA = [[0, "#F8E7E3"], [1, "#C8553D"]]
 INK, GRID = "#2A1418", "#EEE5DC"
-FONT = "Source Sans 3, Source Sans Pro, Arial, sans-serif"
+FONT = "'Source Sans 3', 'Source Sans Pro', Arial, sans-serif"   # dikutip: nama berakhiran angka tidak sah tanpa kutip
 
 UKURAN_PETA = {
     "Rusak dan masih dihuni": "rd",
     "Rusak": "rusak",
     "Kosong": "kosong",
     "Dinding kayu/papan": "kayu",
+    "Lingkungan rusak": "lingk",
 }
 
 short, pct, fmt = ins.short, ins.pct, ins.p0
@@ -153,6 +155,9 @@ def nilai_peta(d, kunci="rd"):
             v, n = pct(dk[FISIK] == "Rusak"), len(dk)
         elif kunci == "kosong":
             v, n = pct(dk[HUNI] == "Kosong"), len(dk)
+        elif kunci == "lingk":
+            dl = dk[dk[LINGK].isin(["Baik", "Sedang", "Rusak"])]
+            v, n = pct(dl[LINGK] == "Rusak"), len(dl)
         else:
             db = dk[dk[BAHAN].isin([KAYU, BATA])]
             v, n = pct(db[BAHAN] == KAYU), len(db)
@@ -166,11 +171,14 @@ def g3_peta(d, kunci="rd", label="Rusak dan masih dihuni", tinggi=430, fs=12, co
     nilai = [v for v, _ in hit.values() if not pd.isna(v)]
     zmax = max(max(nilai), 1) if nilai else 1
     fig = go.Figure()
+    terang = {}
     for ft in gj["features"]:
         k = ft["properties"]["Kecamatan"]
         ring = ft["geometry"]["coordinates"][0]
         v, n = hit.get(k, (np.nan, 0))
         warna = "#E6E9EC" if pd.isna(v) else sample_colorscale(SKALA_PETA, [min(v / zmax, 1)])[0]
+        rgb = [float(x) for x in re.findall(r"[\d.]+", warna)[:3]] if warna.startswith("rgb") else [int(warna[i:i + 2], 16) for i in (1, 3, 5)]
+        terang[k] = (0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2]) / 255 > 0.6
         info = f"{k}<br>{label}: {fmt(v)}<br>n = {n}" if n else f"{k}<br>tidak ada data pada filter"
         fig.add_trace(go.Scatter(x=[p[0] for p in ring], y=[p[1] for p in ring], mode="lines", fill="toself",
                                  fillcolor=warna, line=dict(color="white", width=2.5), text=info, hoverinfo="text",
@@ -178,7 +186,7 @@ def g3_peta(d, kunci="rd", label="Rusak dan masih dihuni", tinggi=430, fs=12, co
     ks = [k for k in hit if k in pusat]
     for k in ks:
         v, n = hit[k]
-        gelap = (not pd.isna(v)) and v / zmax > 0.62
+        gelap = not terang.get(k, True)
         fig.add_annotation(x=pusat[k][0], y=pusat[k][1], showarrow=False,
                            text=f"<b>{short(k)}</b><br><span style='font-size:{fs + 6}px'><b>{fmt(v)}</b></span><br>n={n}{kecil(n)}",
                            font=dict(size=fs, color="white" if gelap else INK, family=FONT))
@@ -266,28 +274,42 @@ def g7_garis(d, tinggi=340, fs=12, ringkas=False):
     for k in ORD_FISIK:
         fig.add_trace(go.Scatter(x=xl, y=pc[k], mode="lines+markers+text", name=f"Lingk. {k.lower()}",
                                  line=dict(color=C_KONDISI[k], width=3), marker=dict(size=9),
-                                 text=[fmt(v) for v in pc[k]], textposition="top center", textfont=dict(size=fs - 2),
+                                 text=[fmt(v) for v in pc[k]], textfont=dict(size=fs - 2),
+                                 # label titik terendah di tiap kategori ditaruh di bawah agar tidak bertumpuk
+                                 textposition=["bottom center" if pc.loc[f, k] == pc.loc[f].min() else "top center"
+                                               for f in ORD_FISIK],
                                  hovertemplate="%{x}<br>Lingkungan " + k + ": %{y:.1f}%<extra></extra>"))
     fig.update_layout(yaxis=dict(title="% bangunan", range=[-5, 108], gridcolor=GRID),
                       xaxis=dict(gridcolor=GRID, title="Kondisi fisik bangunan", tickangle=0))
     fig = tata(fig, tinggi, fs)
     if ringkas:   # poster: legenda di atas, tanpa judul sumbu x
         fig.update_layout(legend=dict(y=1.02, yanchor="bottom", font=dict(size=fs - 1)), margin=dict(t=30, b=5),
-                          xaxis_title=None, yaxis_title=None)
+                          xaxis_title=None, yaxis_title=None, yaxis_range=[-22, 112])
     else:
         fig.update_layout(legend=dict(y=-0.38))
     return fig
+
+
+def sumber_teks(d):
+    """'survei lapangan oleh penulis (150 bangunan) dan tim survei (866 bangunan)', dihitung dari kolom Sumber."""
+    if "Sumber" not in d.columns:
+        return "survei lapangan"
+    n = d["Sumber"].value_counts()
+    bagian = [f"{nm.lower()} ({int(n[nm])} bangunan)" for nm in ("Penulis", "Tim survei") if nm in n]
+    return "survei lapangan oleh " + " dan ".join(bagian) if bagian else "survei lapangan"
 
 
 def kpi(d):
     """Angka KPI yang sama untuk dashboard dan poster."""
     b = d[d[BAHAN].isin([KAYU, BATA])]
     rd = (d[FISIK] == "Rusak") & d[HUNI].isin(MASIH_DIHUNI)
+    lg = d[d[LINGK].isin(["Baik", "Sedang", "Rusak"])]  # hanya lingkungan yang tercatat
     return dict(
         n=len(d),
         rusak=pct(d[FISIK] == "Rusak"), n_rusak=int((d[FISIK] == "Rusak").sum()),
         rd=pct(rd), n_rd=int(rd.sum()),
         kosong=pct(d[HUNI] == "Kosong"), n_kosong=int((d[HUNI] == "Kosong").sum()),
         kayu=pct(b[BAHAN] == KAYU), n_bahan=len(b),
+        lingk=pct(lg[LINGK] == "Rusak"), n_lingk_rusak=int((lg[LINGK] == "Rusak").sum()), n_lingk=len(lg),
         n_kec=d[KEC].nunique(),
     )

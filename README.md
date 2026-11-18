@@ -1,6 +1,6 @@
 # Kondisi Fisik dan Status Hunian Bangunan di Kota Banjarmasin
 
-Dashboard, insight, dan poster A3 dari survei lapangan bangunan di lima kecamatan Kota Banjarmasin.
+Dashboard, insight, dan poster A3 tentang kondisi bangunan di lima kecamatan Kota Banjarmasin, dari survei lapangan.
 Hasil dibaca sebagai indikasi awal, bukan bukti sebab-akibat.
 
 ![Poster A3](docs/preview_poster.jpg)
@@ -13,9 +13,10 @@ membuat api cepat membesar (ANTARA, 2 Januari 2025). Belum ada gambaran per keca
 yang masih ditempati.
 
 ## Dataset
-Data primer, pengamatan langsung, dicatat manual di Excel (`data/data_bangunan.xlsx`, sheet pertama).
-Satu baris = satu bangunan. Variabel: Kecamatan, Jenis Bangunan, Bahan Dinding, Kondisi Fisik, Status Hunian,
-Kondisi Lingkungan Sekitar. Data saat ini: 150 bangunan (sementara).
+`data/data_bangunan.xlsx` (sheet pertama). Data survei lapangan berupa pengamatan langsung terhadap 1.016 bangunan:
+150 diamati penulis dan 866 diamati tim survei (472 + 394 tambahan). Kolom `Sumber` menandai pengamat setiap baris. Satu baris = satu bangunan.
+Variabel:
+Kecamatan, Kelurahan (data tim), Jenis Bangunan, Bahan Dinding, Kondisi Fisik, Status Hunian, Kondisi Lingkungan Sekitar.
 
 ## Tools
 Python (pandas, NumPy), Plotly, Streamlit, Shapely, Playwright.
@@ -38,20 +39,21 @@ python buat_poster.py                # poster/poster.pdf, poster.png, poster.htm
 - `docs/` : gambar pratinjau poster untuk README.
 - `assets/` : potongan motif sasirangan, font Bitter dan Source Sans 3 (lisensi SIL OFL).
 
-## Key Insights (data sementara, n=150)
-1. 25 dari 32 bangunan rusak yang masih dihuni berdinding kayu/papan; kayu/papan hanya 28% dari bangunan.
-2. 21% bangunan rusak tetapi masih dihuni; tertinggi di Utara dan Barat, terendah di Tengah.
-3. Lingkungan rusak di sekitar 67% bangunan rusak, tetapi hanya 10% bangunan baik.
-4. Bangunan kosong tidak lebih rusak (28% vs 28%), tetapi rumah kosong lebih sering rusak daripada rumah dihuni.
-5. Ruko kosong 4,7 kali lebih sering daripada rumah (53% vs 11%).
+## Key Insights (n = 1.016)
+1. 148 dari 193 bangunan rusak yang masih dihuni (77%) berdinding kayu/papan; kayu/papan hanya 27% dari bangunan.
+2. 19% bangunan rusak tetapi masih dihuni; tertinggi di Barat (25%) dan Utara (23%), terendah di Selatan (12%).
+3. Lingkungan rusak di sekitar 65% bangunan rusak, tetapi hanya 8% bangunan baik.
+4. Bangunan kosong justru lebih jarang rusak daripada yang dihuni (14% vs 25%), karena 74% bangunan kosong adalah ruko
+   yang sebagian besar masih baik; pada rumah saja, rumah kosong dan rumah dihuni hampir sama (33% vs 29%).
+5. Ruko kosong 5,8 kali lebih sering daripada rumah (52% vs 9%).
 
 ## Recommendation
 Dahulukan pemeriksaan kelayakan dan sosialisasi pencegahan kebakaran pada bangunan kayu/papan rusak yang masih
-dihuni, mulai dari Utara dan Barat; arahkan kerja bakti dan pemeriksaan jentik ke sekitar bangunan rusak.
+dihuni, mulai dari Barat dan Utara; arahkan kerja bakti dan pemeriksaan jentik ke sekitar bangunan rusak.
 
 ## Catatan
 Kelompok dengan n < 10 diberi tanda ⚠. Selisih di bawah 5 poin persen ditulis "hampir sama".
-Sampel belum acak; survei tidak mencatat usia bangunan, pendapatan, atau lama bangunan kosong.
+Bangunan tidak dipilih secara acak. Data tidak mencatat usia bangunan, pendapatan, atau lama bangunan kosong.
 
 ## Lisensi
 Kode memakai lisensi MIT (lihat `LICENSE`). Font memakai SIL OFL. Data dipakai untuk keperluan akademik.

@@ -138,11 +138,11 @@ def insight_rusak_dihuni(d):
         judul="bangunan rusak tetapi masih dihuni atau dipakai usaha",
         pendek=f"{n_rd} dari {len(d)} bangunan rusak tetapi masih ditempati. {pendek}",
         apa=f"{n_rd} dari {len(d)} bangunan rusak tetapi masih ditempati. {banding}",
-        mengapa="Dugaan: penghuni belum mampu memperbaiki atau pindah. Survei tidak mencatat pendapatan, jadi dugaan ini belum bisa dibuktikan.",
+        mengapa="Dugaan: penghuni belum mampu memperbaiki atau pindah. Data tidak mencatat pendapatan, jadi dugaan ini belum bisa dibuktikan.",
         lalu_apa="Kerusakan pada bangunan yang ditempati menyangkut keselamatan orang yang tinggal atau bekerja di dalamnya.",
         sekarang_apa=f"Mulai pemeriksaan kelayakan bangunan dari {target}.",
-        peringatan=warn + (" Selisih antarkecamatan kecil dan n tiap kecamatan terbatas; jangan dibaca sebagai peringkat."
-                           if len(per) >= 2 else ""),
+        peringatan=warn + ((" Selisih antarkecamatan kecil" + (" dan n tiap kecamatan terbatas" if per["n"].min() < 50 else "")
+                            + "; jangan dibaca sebagai peringkat.") if len(per) >= 2 else ""),
     )
 
 
@@ -164,7 +164,7 @@ def insight_lingkungan(d):
              f"dibanding sekitar bangunan baik ({p0(pb)}, n={len(gb)})."),
         mengapa=("Dugaan: bangunan dan sekitarnya sama-sama kurang terawat. Kemungkinan lain, keduanya dinilai oleh orang yang sama "
                  "pada waktu yang sama, sehingga penilaian bisa saling memengaruhi."),
-        lalu_apa="Tumpukan sampah, genangan, dan wadah berair dapat menjadi tempat nyamuk bertelur. Survei ini tidak mengukur jentik, jadi ini indikasi.",
+        lalu_apa="Tumpukan sampah, genangan, dan wadah berair dapat menjadi tempat nyamuk bertelur. Data ini tidak mengukur jentik, jadi ini indikasi.",
         sekarang_apa="Arahkan kerja bakti dan pemeriksaan jentik ke sekitar bangunan rusak lebih dulu.",
         peringatan=_peringatan(("Bangunan rusak", len(gr)), ("Bangunan baik", len(gb))),
     )
@@ -190,15 +190,18 @@ def insight_kosong(d):
     porsi_ruko = pct(kos[JENIS] == "Ruko")
     rk, rh = kos[kos[JENIS] == "Rumah"], huni[huni[JENIS] == "Rumah"]
     tambahan, warn_pairs = "", [("Kosong", len(kos))]
-    mengapa = "Survei tidak mencatat sudah berapa lama bangunan kosong, jadi penyebab perbedaan ini belum bisa dipastikan."
+    mengapa = "Data tidak mencatat sudah berapa lama bangunan kosong, jadi penyebab perbedaan ini belum bisa dipastikan."
     if len(rk) and len(rh):
         prk, prh = pct(rk[FISIK] == "Rusak"), pct(rh[FISIK] == "Rusak")
+        mirip = " (hampir sama)" if abs(prk - prh) < BEDA_TIPIS else ""
         tambahan = (f" Namun {p0(porsi_ruko)} bangunan kosong adalah ruko. Jika hanya rumah yang dilihat, "
-                    f"rumah kosong yang rusak {p0(prk)} (n={len(rk)}), rumah yang dihuni {p0(prh)} (n={len(rh)}).")
+                    f"rumah kosong yang rusak {p0(prk)} (n={len(rk)}), rumah yang dihuni {p0(prh)} (n={len(rh)}){mirip}.")
         warn_pairs.append(("Rumah kosong", len(rk)))
         if (prk - prh) - selisih >= BEDA_TIPIS:
-            mengapa = ("Ruko kosong sebagian besar masih baik, sehingga menutupi pola pada rumah. "
-                       "Survei tidak mencatat sudah berapa lama bangunan kosong.")
+            ru = d[d[JENIS] == "Ruko"]
+            mengapa = (f"Sebagian besar bangunan kosong adalah ruko, dan ruko jarang rusak ({p0(pct(ru[FISIK] == 'Rusak'))}), "
+                       "sehingga persentase rusak pada bangunan kosong ikut turun. "
+                       "Data tidak mencatat sudah berapa lama bangunan kosong.")
 
     return dict(
         utama=False, grafik=4,
@@ -208,7 +211,7 @@ def insight_kosong(d):
         apa=apa + tambahan,
         mengapa=mengapa,
         lalu_apa="Status kosong saja belum cukup untuk menandai bangunan bermasalah. Jenis bangunan perlu dilihat bersama.",
-        sekarang_apa="Pisahkan rumah dan ruko saat membaca data kosong, dan catat lama kosong pada survei lanjutan.",
+        sekarang_apa="Pisahkan rumah dan ruko saat membaca data kosong, dan catat lama kosong pada pengumpulan data berikutnya.",
         peringatan=_peringatan(*warn_pairs),
     )
 
@@ -234,9 +237,9 @@ def insight_ruko(d):
         judul="lebih sering kosong: ruko dibanding rumah" if pru > prm else "persentase kosong: ruko dan rumah",
         pendek=f"{p0(pru)} ruko kosong, rumah hanya {p0(prm)}.",
         apa=banding + baik,
-        mengapa="Dugaan: sebagian ruko sedang menunggu penyewa atau pembeli. Survei tidak mencatat alasan bangunan kosong.",
+        mengapa="Dugaan: sebagian ruko sedang menunggu penyewa atau pembeli. Data tidak mencatat alasan bangunan kosong.",
         lalu_apa="Ruko kosong yang masih baik adalah ruang yang belum terpakai. Bila lama dibiarkan, kondisinya bisa menurun.",
-        sekarang_apa="Pantau ruko kosong agar tetap terawat, dan catat alasan serta lama kosongnya pada survei lanjutan.",
+        sekarang_apa="Pantau ruko kosong agar tetap terawat, dan catat alasan serta lama kosongnya pada pengumpulan data berikutnya.",
         peringatan=_peringatan(("Ruko", len(ru)), ("Rumah", len(rm))),
     )
 

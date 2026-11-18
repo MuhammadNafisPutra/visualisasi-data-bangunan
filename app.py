@@ -11,6 +11,8 @@ from pathlib import Path
 import pandas as pd
 import streamlit as st
 
+LABEL_SUMBER = "Survei lapangan"
+
 import grafik as g
 import insight as ins
 
@@ -20,7 +22,7 @@ CRIMSON, MAROON = "#A31239", "#6B0B26"
 INK, MUTED = "#2A1418", "#76645F"
 esc = html.escape
 
-st.set_page_config(page_title="Dashboard Bangunan Banjarmasin", layout="wide")
+st.set_page_config(page_title="Dashboard Bangunan Banjarmasin", page_icon=str(Path(__file__).parent / "assets" / "logo.png"), layout="wide")
 
 
 @st.cache_data
@@ -29,6 +31,7 @@ def b64(nama):
 
 
 BANNER, STRIP, MAROON_IMG = b64("banner.jpg"), b64("strip.png"), b64("maroon.jpg")
+LOGO = b64("logo.png")
 
 st.markdown(f"""<style>
 @import url('https://fonts.googleapis.com/css2?family=Bitter:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap');
@@ -40,11 +43,13 @@ h3 {{font-size:1.05rem !important; font-weight:600 !important; margin:0 0 .1rem 
 .hdr {{display:grid; grid-template-columns:1.3fr 1fr; min-height:190px; border-radius:2px; overflow:hidden;}}
 .hdr .hl {{background:url(data:image/jpeg;base64,{MAROON_IMG}) center/cover; padding:1.5rem 1.8rem; color:white;}}
 .hdr .hr {{background:url(data:image/jpeg;base64,{BANNER}) center/cover;}}
+.hdr .brand {{display:flex; gap:1.1rem; align-items:center;}}
+.hdr .brand img {{width:82px; height:82px; border-radius:12px; flex:none; box-shadow:0 0 0 2px rgba(255,255,255,.18);}}
 .hdr .over {{font-size:.74rem; letter-spacing:.14em; text-transform:uppercase; color:#F2B7C3; font-weight:600; margin-bottom:.55rem;}}
 .hdr h1 {{color:white !important; font-size:1.95rem; font-weight:700 !important; margin:0 0 .6rem 0; padding:0; line-height:1.2;}}
 .hdr p {{color:#F4D9DF; margin:0; font-size:.95rem; max-width:520px;}}
 .strip {{height:16px; background:url(data:image/png;base64,{STRIP}) repeat-x left center/auto 100%; margin:0 0 .3rem 0;}}
-.kpis {{display:grid; grid-template-columns:repeat(5,1fr); border-top:2px solid {INK}; border-bottom:1px solid {RULE}; margin:1rem 0 .2rem 0;}}
+.kpis {{display:grid; grid-template-columns:repeat(6,1fr); border-top:2px solid {INK}; border-bottom:1px solid {RULE}; margin:1rem 0 .2rem 0;}}
 .kpi {{padding:.8rem 1.1rem; border-right:1px solid {RULE};}}
 .kpi:last-child {{border-right:0;}} .kpi:first-child {{padding-left:0;}}
 .kpi .v {{font-family:Bitter,serif; font-size:2.3rem; font-weight:700; color:{INK}; line-height:1.1;}}
@@ -85,6 +90,8 @@ section[data-testid="stSidebar"] {{background:#EBDDD0;}}
 
 # ======================= data =======================
 muat = st.cache_data(g.muat)
+if hasattr(st, "logo"):
+    st.logo(str(Path(__file__).parent / "assets" / "logo.png"), size="large")
 st.sidebar.header("Filter")
 unggah = st.sidebar.file_uploader("Ganti data (opsional, .xlsx)", type=["xlsx"])
 if unggah is not None:
@@ -111,9 +118,9 @@ d = df[df[g.KEC].isin(f_kec) & df[g.JENIS].isin(f_jenis) & df[g.BAHAN].isin(f_ba
 
 # ======================= header =======================
 st.markdown(f"""<div class="hdr"><div class="hl">
-<div class="over">Survei lapangan · {len(df)} bangunan · {len(SEMUA_KEC)} kecamatan</div>
-<h1>Kondisi Fisik dan Status Hunian Bangunan di Kota Banjarmasin</h1>
-<p>Data primer dari pengamatan langsung. Hasil dibaca sebagai indikasi awal, bukan bukti sebab-akibat.</p>
+<div class="over">{LABEL_SUMBER} · {len(df)} bangunan · {len(SEMUA_KEC)} kecamatan</div>
+<div class="brand"><img src="data:image/png;base64,{LOGO}" alt="Logo"><h1>Kondisi Fisik dan Status Hunian Bangunan di Kota Banjarmasin</h1></div>
+<p style="margin-top:.6rem">Pengamatan langsung oleh penulis dan tim survei. Hasil dibaca sebagai indikasi awal, bukan bukti sebab-akibat.</p>
 </div><div class="hr"></div></div><div class="strip"></div>""", unsafe_allow_html=True)
 
 if d.empty:
@@ -122,11 +129,12 @@ if d.empty:
 
 # ======================= KPI =======================
 k = g.kpi(d)
-kartu = [(f"{k['n']}", "Bangunan disurvei", f"dari {len(df)} pada data", CRIMSON),
+kartu = [(f"{k['n']}", "Bangunan tercatat", f"dari {len(df)} pada data", CRIMSON),
          (g.fmt(k["rusak"]), "Rusak", f"{k['n_rusak']} bangunan", g.C_KONDISI["Rusak"]),
          (g.fmt(k["rd"]), "Rusak & masih dihuni", f"{k['n_rd']} bangunan", MAROON),
          (g.fmt(k["kosong"]), "Kosong", f"{k['n_kosong']} bangunan", g.C_HUNI["Kosong"]),
-         (g.fmt(k["kayu"]), "Dinding kayu/papan", f"dari {k['n_bahan']} yang bahannya pasti", g.C_KAYU)]
+         (g.fmt(k["kayu"]), "Dinding kayu/papan", f"dari {k['n_bahan']} yang bahannya pasti", g.C_KAYU),
+         (g.fmt(k["lingk"]), "Lingkungan rusak", f"{k['n_lingk_rusak']} dari {k['n_lingk']} yang tercatat", "#5E7C3A")]
 st.markdown('<div class="kpis">' + "".join(
     f'<div class="kpi"><div class="v">{v}</div><div class="l"><i style="--c:{c}"></i>{l}</div><div class="s">{s}</div></div>'
     for v, l, s, c in kartu) + "</div>", unsafe_allow_html=True)
@@ -200,6 +208,8 @@ with c3, st.container(border=True):
             st.caption("Bangunan rusak yang masih dihuni (berpenghuni atau dipakai usaha) dibagi seluruh bangunan di kecamatan itu.")
         elif pilih == "Dinding kayu/papan":
             st.caption("Dihitung dari bangunan yang bahan dindingnya sudah pasti.")
+        elif pilih == "Lingkungan rusak":
+            st.caption("Dihitung dari bangunan yang kondisi lingkungannya tercatat. Lingkungan rusak = tumpukan sampah, semak lebat, genangan, atau wadah berair.")
     else:
         st.info("File zona kecamatan tidak ditemukan, jadi peta tidak ditampilkan.")
 with c4, st.container(border=True):
@@ -242,10 +252,11 @@ with st.expander("Catatan data"):
     ex_b = int((~d[g.BAHAN].isin([g.KAYU, g.BATA])).sum())
     ex_l = int(d[g.LINGK].isna().sum())
     st.markdown(
+        f"- Sumber: {g.sumber_teks(df)}. Kolom Sumber pada tabel menunjukkan siapa yang mengamati tiap bangunan.\n"
         f"- {ex_b} bangunan dengan bahan dinding belum dikonfirmasi tidak dihitung pada grafik 5, insight bahan dinding, dan KPI kayu/papan.\n"
         f"- {ex_l} bangunan tanpa penilaian lingkungan tidak dihitung pada grafik 7 dan insight lingkungan.\n"
         f"- Kelompok dengan n di bawah {ins.N_KECIL} diberi tanda ⚠. Selisih di bawah 5 poin persen ditulis \"hampir sama\".\n"
         "- Zona kecamatan pada peta adalah perkiraan (diagram Voronoi), bukan batas resmi.\n"
-        "- Bagian MENGAPA berisi dugaan. Survei tidak mencatat usia bangunan, pendapatan, atau lama bangunan kosong.")
+        "- Bagian MENGAPA berisi dugaan. Data tidak mencatat usia bangunan, pendapatan, atau lama bangunan kosong.")
 with st.expander("Tabel data (hasil filter)"):
     st.dataframe(d, width="stretch", hide_index=True)

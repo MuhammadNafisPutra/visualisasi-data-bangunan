@@ -25,7 +25,8 @@ PAPER, RULE, CRIMSON, MAROON, INK, MUTED = "#F5EEE4", "#DCCFC2", "#A31239", "#6B
 # Sumber fakta di luar data survei (ditampilkan di poster). Jangan menambah klaim tanpa sumber.
 MASALAH = ("Banjarmasin mencatat 135 titik kebakaran permukiman pada 2024. Menurut Kepala DPKP Kota Banjarmasin, "
            "permukiman padat dan rumah berkonstruksi kayu membuat api cepat membesar (ANTARA, 2 Januari 2025). "
-           "Survei ini memetakan bangunan rusak yang masih ditempati di lima kecamatan.")
+           "Analisis ini memetakan bangunan rusak yang masih ditempati di lima kecamatan.")
+LABEL_ATAS = "Survei lapangan"
 IDENTITAS = "Muhammad Nafis Putra · 2410817210021 · Visualisasi Data 2026"
 
 
@@ -132,7 +133,7 @@ body {{ font-family:'Source Sans 3', Arial, sans-serif; color:{INK}; -webkit-pri
 </style></head><body><div class="page">
 
 <div class="hdr"><div class="hl">
-  <div class="over">Survei lapangan · {k['n']} bangunan · {k['n_kec']} kecamatan · Kota Banjarmasin</div>
+  <div class="over">{LABEL_ATAS} · {k['n']} bangunan · {k['n_kec']} kecamatan</div>
   <div class="hook">{esc(hook)}.</div>
   <div class="sub">Kondisi Fisik dan Status Hunian Bangunan di Kota Banjarmasin</div>
 </div><div class="hr"></div></div>
@@ -159,7 +160,7 @@ body {{ font-family:'Source Sans 3', Arial, sans-serif; color:{INK}; -webkit-pri
     <div class="jd">{esc(utama['judul'])}</div>
     <div class="txt">{esc(detail_utama)}</div>
     <div class="fig"><div class="gt">% rusak menurut bahan dinding (luas lingkaran = % rusak)</div>
-      {plot(g.g5_balon(d, fs=FS, maks=30, luar=True), 392, 200)}</div>
+      {plot(g.g5_balon(d, fs=FS, maks=30, luar=True), 392, 182)}</div>
   </div>
 </div>
 
@@ -181,7 +182,7 @@ body {{ font-family:'Source Sans 3', Arial, sans-serif; color:{INK}; -webkit-pri
 </ol></div>
 
 <div class="foot">
-  <div>Sumber: survei lapangan (data primer), n = {k['n']} bangunan. Indikasi awal, bukan bukti sebab-akibat.
+  <div>Sumber: {g.sumber_teks(d)}, n = {k['n']} bangunan. Indikasi awal, bukan bukti sebab-akibat.
     Persen peta = bangunan rusak yang masih dihuni ÷ semua bangunan di kecamatan. ⚠ = n &lt; {ins.N_KECIL}.</div>
   <div style="text-align:right;white-space:nowrap">{esc(IDENTITAS)}</div>
 </div>
@@ -200,7 +201,13 @@ def main():
         print("Playwright belum terpasang; hanya poster.html yang dibuat.")
         return
     with sync_playwright() as p:
-        b = p.chromium.launch()
+        try:
+            b = p.chromium.launch()
+        except Exception:   # Chromium Playwright belum dipasang: pakai Edge/Chrome yang sudah ada di komputer
+            try:
+                b = p.chromium.launch(channel="msedge")
+            except Exception:
+                b = p.chromium.launch(channel="chrome")
         pg = b.new_page(viewport={"width": 1123, "height": 1587}, device_scale_factor=3)
         pg.goto(html_file.resolve().as_uri())
         pg.wait_for_timeout(1500)
