@@ -143,8 +143,12 @@ kartu = [(f"{k['n']}", "Bangunan tercatat", f"dari {len(df)} pada data", CRIMSON
          (g.fmt(k["rusak"]), "Rusak", f"{k['n_rusak']} bangunan", g.C_KONDISI["Rusak"]),
          (g.fmt(k["rd"]), "Rusak & masih dihuni", f"{k['n_rd']} bangunan", MAROON),
          (g.fmt(k["kosong"]), "Kosong", f"{k['n_kosong']} bangunan", g.C_HUNI["Kosong"]),
-         (g.fmt(k["kayu"]), "Dinding kayu/papan", f"dari {k['n_bahan']} yang bahannya pasti", g.C_KAYU),
-         (g.fmt(k["lingk"]), "Lingkungan rusak", f"{k['n_lingk_rusak']} dari {k['n_lingk']} yang tercatat", "#5E7C3A")]
+         (g.fmt(k["kayu"]), "Dinding kayu/papan",
+          f"{round(k['kayu'] * k['n_bahan'] / 100)} dari {k['n_bahan']} bangunan" if k["n_bahan"] == k["n"]
+          else f"dari {k['n_bahan']} yang bahannya pasti", g.C_KAYU),
+         (g.fmt(k["lingk"]), "Lingkungan rusak",
+          f"{k['n_lingk_rusak']} dari {k['n_lingk']} bangunan" if k["n_lingk"] == k["n"]
+          else f"{k['n_lingk_rusak']} dari {k['n_lingk']} yang tercatat", "#5E7C3A")]
 st.markdown('<div class="kpis">' + "".join(
     f'<div class="kpi"><div class="v">{v}</div><div class="l"><i style="--c:{c}"></i>{l}</div><div class="s">{s}</div></div>'
     for v, l, s, c in kartu) + "</div>", unsafe_allow_html=True)
@@ -267,10 +271,14 @@ st.markdown('<div class="strip" style="margin-top:1.4rem"></div>', unsafe_allow_
 with st.expander("Catatan data"):
     ex_b = int((~d[g.BAHAN].isin([g.KAYU, g.BATA])).sum())
     ex_l = int(d[g.LINGK].isna().sum())
+    lengkap = ("- Data lengkap: seluruh bangunan memiliki isian bahan dinding, kondisi fisik, status hunian, "
+               "dan kondisi lingkungan, sehingga semua bangunan dihitung pada setiap grafik dan insight.\n")
+    if ex_b or ex_l:
+        lengkap = ((f"- {ex_b} bangunan dengan bahan dinding belum dikonfirmasi tidak dihitung pada grafik 5, insight bahan dinding, dan KPI kayu/papan.\n" if ex_b else "")
+                   + (f"- {ex_l} bangunan tanpa penilaian lingkungan tidak dihitung pada grafik 7 dan insight lingkungan.\n" if ex_l else ""))
     st.markdown(
         f"- Sumber: {g.sumber_teks(df)}, {len(df)} bangunan.\n"
-        f"- {ex_b} bangunan dengan bahan dinding belum dikonfirmasi tidak dihitung pada grafik 5, insight bahan dinding, dan KPI kayu/papan.\n"
-        f"- {ex_l} bangunan tanpa penilaian lingkungan tidak dihitung pada grafik 7 dan insight lingkungan.\n"
+        + lengkap +
         f"- Kelompok dengan n di bawah {ins.N_KECIL} diberi tanda ⚠. Selisih di bawah 5 poin persen ditulis \"hampir sama\".\n"
         "- Zona kecamatan pada peta adalah perkiraan (diagram Voronoi), bukan batas resmi.\n"
         "- Bagian MENGAPA berisi dugaan. Data tidak mencatat usia bangunan, pendapatan, atau lama bangunan kosong.")

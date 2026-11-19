@@ -74,7 +74,7 @@ if nama_ok != set(KECS):
 
 tpl = (BASE / "template_peta3d.html").read_text(encoding="utf-8")
 banner = (("<b>DATA CONTOH (dummy)</b>, bukan hasil survei. " if DATA_DUMMY
-           else f"Seluruh data dari survei lapangan (pengamatan langsung): {len(d):,} bangunan".replace(",", ".")
+           else f"Seluruh data dari survei lapangan: {len(d):,} bangunan".replace(",", ".")
                 + ". Bangunan tidak dipilih acak; hasil berupa indikasi awal. ")
           + f"Batas kecamatan: {ket_geo}. Batas kota dari GADM. Peta dasar: Esri.")
 ASET = BASE / "assets"
