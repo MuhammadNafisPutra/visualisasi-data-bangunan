@@ -291,12 +291,8 @@ def g7_garis(d, tinggi=340, fs=12, ringkas=False):
 
 
 def sumber_teks(d):
-    """'survei lapangan oleh penulis (150 bangunan) dan tim survei (866 bangunan)', dihitung dari kolom Sumber."""
-    if "Sumber" not in d.columns:
-        return "survei lapangan"
-    n = d["Sumber"].value_counts()
-    bagian = [f"{nm.lower()} ({int(n[nm])} bangunan)" for nm in ("Penulis", "Tim survei") if nm in n]
-    return "survei lapangan oleh " + " dan ".join(bagian) if bagian else "survei lapangan"
+    """Teks sumber data: seluruh data berasal dari survei lapangan (pengamatan langsung)."""
+    return "survei lapangan (pengamatan langsung)"
 
 
 def kpi(d):

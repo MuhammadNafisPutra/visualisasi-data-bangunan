@@ -16,10 +16,10 @@ membuat api cepat membesar (ANTARA, 2 Januari 2025). Belum ada gambaran per keca
 yang masih ditempati.
 
 ## Dataset
-`data/data_bangunan.xlsx` (sheet pertama). Data survei lapangan berupa pengamatan langsung terhadap 1.016 bangunan:
-150 diamati penulis dan 866 diamati tim survei (472 + 394 tambahan). Kolom `Sumber` menandai pengamat setiap baris. Satu baris = satu bangunan.
+`data/data_bangunan.xlsx` (sheet pertama). Seluruh data berasal dari survei lapangan berupa pengamatan
+langsung terhadap 1.016 bangunan. Satu baris = satu bangunan.
 Variabel:
-Kecamatan, Kelurahan (data tim), Jenis Bangunan, Bahan Dinding, Kondisi Fisik, Status Hunian, Kondisi Lingkungan Sekitar.
+Kecamatan, Kelurahan (tidak lengkap), Jenis Bangunan, Bahan Dinding, Kondisi Fisik, Status Hunian, Kondisi Lingkungan Sekitar.
 
 ## Tools
 Python (pandas, NumPy), Plotly, Streamlit, MapLibre GL JS, Shapely, Playwright.

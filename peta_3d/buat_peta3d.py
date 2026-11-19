@@ -43,7 +43,7 @@ def agregat():
     for i, kec in enumerate(KECS):
         g = d2[d2[KEC] == kec]
         kel = []
-        if KEL in g.columns:   # kelurahan hanya dicatat pada data tim survei
+        if KEL in g.columns:   # kelurahan tidak tercatat untuk seluruh bangunan
             for nama, gk in g.dropna(subset=[KEL]).groupby(KEL):
                 kel.append({"nama": nama, "n": int(len(gk)), "rusak": pct(gk._r), "rd": pct(gk._rd),
                             "kayu": kayu(gk), "ling_buruk": pct(gk[LINGK].dropna() == "Rusak")})
@@ -74,9 +74,7 @@ if nama_ok != set(KECS):
 
 tpl = (BASE / "template_peta3d.html").read_text(encoding="utf-8")
 banner = (("<b>DATA CONTOH (dummy)</b>, bukan hasil survei. " if DATA_DUMMY
-           else f"Data survei lapangan: {len(d):,} bangunan".replace(",", ".")
-                + (" (" + ", ".join(f"{v} {k.lower()}" for k, v in d[SUMBER].value_counts().items()) + ")"
-                   if SUMBER in d.columns else "")
+           else f"Seluruh data dari survei lapangan (pengamatan langsung): {len(d):,} bangunan".replace(",", ".")
                 + ". Bangunan tidak dipilih acak; hasil berupa indikasi awal. ")
           + f"Batas kecamatan: {ket_geo}. Batas kota dari GADM. Peta dasar: Esri.")
 ASET = BASE / "assets"

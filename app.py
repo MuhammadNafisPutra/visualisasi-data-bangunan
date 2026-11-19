@@ -123,7 +123,7 @@ d = df[df[g.KEC].isin(f_kec) & df[g.JENIS].isin(f_jenis) & df[g.BAHAN].isin(f_ba
 st.markdown(f"""<div class="hdr"><div class="hl">
 <div class="over">{LABEL_SUMBER} · {len(df)} bangunan · {len(SEMUA_KEC)} kecamatan</div>
 <div class="brand"><img src="data:image/png;base64,{LOGO}" alt="Logo"><h1>Kondisi Fisik dan Status Hunian Bangunan di Kota Banjarmasin</h1></div>
-<p style="margin-top:.6rem">Pengamatan langsung oleh penulis dan tim survei. Hasil dibaca sebagai indikasi awal, bukan bukti sebab-akibat.</p>
+<p style="margin-top:.6rem">Seluruh data berasal dari pengamatan langsung di lapangan. Hasil dibaca sebagai indikasi awal, bukan bukti sebab-akibat.</p>
 </div><div class="hr"></div></div><div class="strip"></div>""", unsafe_allow_html=True)
 
 if d.empty:
@@ -261,11 +261,11 @@ with st.expander("Catatan data"):
     ex_b = int((~d[g.BAHAN].isin([g.KAYU, g.BATA])).sum())
     ex_l = int(d[g.LINGK].isna().sum())
     st.markdown(
-        f"- Sumber: {g.sumber_teks(df)}. Kolom Sumber pada tabel menunjukkan siapa yang mengamati tiap bangunan.\n"
+        f"- Sumber: {g.sumber_teks(df)}, {len(df)} bangunan.\n"
         f"- {ex_b} bangunan dengan bahan dinding belum dikonfirmasi tidak dihitung pada grafik 5, insight bahan dinding, dan KPI kayu/papan.\n"
         f"- {ex_l} bangunan tanpa penilaian lingkungan tidak dihitung pada grafik 7 dan insight lingkungan.\n"
         f"- Kelompok dengan n di bawah {ins.N_KECIL} diberi tanda ⚠. Selisih di bawah 5 poin persen ditulis \"hampir sama\".\n"
         "- Zona kecamatan pada peta adalah perkiraan (diagram Voronoi), bukan batas resmi.\n"
         "- Bagian MENGAPA berisi dugaan. Data tidak mencatat usia bangunan, pendapatan, atau lama bangunan kosong.")
 with st.expander("Tabel data (hasil filter)"):
-    st.dataframe(d, width="stretch", hide_index=True)
+    st.dataframe(d.drop(columns=["Sumber"], errors="ignore"), width="stretch", hide_index=True)

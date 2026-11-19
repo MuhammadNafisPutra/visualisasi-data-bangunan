@@ -77,7 +77,7 @@ details[open]>summary:before{transform:rotate(90deg)}
  <details id="rankBox" style="margin-top:4px;border-top:1px solid var(--rule)"><summary>Peringkat indikatif</summary><div id="rank"></div></details>
  </div>
 </div>
-<div id="banner" class="box"><details><summary>Sumber &amp; catatan</summary>Data survei lapangan: 1.016 bangunan (866 tim survei, 150 penulis). Bangunan tidak dipilih acak; hasil berupa indikasi awal. Batas kecamatan: zona kecamatan PERKIRAAN, bukan batas resmi. Batas kota dari GADM. Peta dasar: Esri.<div class="hint">Putar/miringkan peta: tahan klik kanan lalu seret.</div></details></div>
+<div id="banner" class="box"><details><summary>Sumber &amp; catatan</summary>Seluruh data dari survei lapangan (pengamatan langsung): 1.016 bangunan. Bangunan tidak dipilih acak; hasil berupa indikasi awal. Batas kecamatan: zona kecamatan PERKIRAAN, bukan batas resmi. Batas kota dari GADM. Peta dasar: Esri.<div class="hint">Putar/miringkan peta: tahan klik kanan lalu seret.</div></details></div>
 <div id="info" class="box"></div>
 <script>/**
  * MapLibre GL JS
@@ -377,7 +377,7 @@ function showInfo(k){
    +'<div style="margin-top:6px">Lingkungan sekitar</div><div class="bar"><span style="width:'+d.ling_baik+'%;background:#4C9F70"></span><span style="width:'+(100-d.ling_baik-d.ling_buruk)+'%;background:#F2B84B"></span><span style="width:'+d.ling_buruk+'%;background:#C8553D"></span></div>'
    +'<div style="font-size:11.5px;color:#76645F">Baik '+d.ling_baik.toFixed(0)+'% &middot; Sedang '+(100-d.ling_baik-d.ling_buruk).toFixed(0)+'% &middot; Buruk '+d.ling_buruk.toFixed(0)+'%</div>'
    +(d.kel.length?'<details id="kelBox" '+(kelBuka?'open':'')+' ontoggle="kelBuka=this.open" style="margin-top:6px;border-top:1px solid var(--rule)"><summary>Rincian per kelurahan ('+d.kel.length+')</summary>'
-   +'<div style="font-size:11px;color:#76645F">Dari data tim survei ('+d.n_kel+' dari '+d.n+' bangunan). &#9888; = kurang dari 10 bangunan, baca hati-hati.</div>'
+   +'<div style="font-size:11px;color:#76645F">Kelurahan tercatat pada '+d.n_kel+' dari '+d.n+' bangunan. &#9888; = kurang dari 10 bangunan, baca hati-hati.</div>'
    +'<table><tr><th>Kelurahan</th><th>n</th><th>Rusak</th><th>Rusak dihuni</th><th>Kayu</th><th>Ling. buruk</th></tr>'
    +d.kel.map(x=>'<tr><td>'+x.nama+(x.n<10?' &#9888;':'')+'</td><td>'+x.n+'</td><td>'+p0(x.rusak)+'</td><td>'+p0(x.rd)+'</td><td>'+p0(x.kayu)+'</td><td>'+p0(x.ling_buruk)+'</td></tr>').join('')
    +'</table></details>':'<div style="margin-top:8px;font-size:11.5px;color:#76645F">Data tidak memuat kolom kelurahan, jadi rincian per kelurahan tidak tersedia.</div>')+'</div>';
