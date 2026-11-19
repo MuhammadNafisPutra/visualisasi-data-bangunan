@@ -2,6 +2,7 @@
 
 Dashboard, peta 3D interaktif, insight, dan poster A3 tentang kondisi bangunan di lima kecamatan Kota Banjarmasin, dari survei lapangan.
 
+- Dashboard: https://dashboard-bangunan-banjarmasin.streamlit.app/
 - Peta 3D interaktif (rumah Banjar): https://muhammadnafisputra.github.io/visualisasi-data-bangunan/peta-3d/
 Hasil dibaca sebagai indikasi awal, bukan bukti sebab-akibat.
 
