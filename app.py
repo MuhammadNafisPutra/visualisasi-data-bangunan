@@ -93,6 +93,13 @@ section[data-testid="stSidebar"] {{background:#EBDDD0;}}
 
 # ======================= data =======================
 muat = st.cache_data(g.muat)
+
+
+@st.cache_data
+def muat_file(path: str, versi: float):
+    """Data bawaan; 'versi' = waktu ubah file, jadi cache otomatis diperbarui saat file data diganti."""
+    return g.muat(path)
+
 if hasattr(st, "logo"):
     st.logo(str(Path(__file__).parent / "assets" / "logo.png"), size="large")
 st.sidebar.header("Filter")
@@ -100,7 +107,7 @@ unggah = st.sidebar.file_uploader("Ganti data (opsional, .xlsx)", type=["xlsx"])
 if unggah is not None:
     df = muat(unggah)
 elif g.DATA_FILE.exists():
-    df = muat(g.DATA_FILE)
+    df = muat_file(str(g.DATA_FILE), g.DATA_FILE.stat().st_mtime)
 else:
     st.error("Data tidak ditemukan. Taruh file di data/data_bangunan.xlsx atau unggah lewat sidebar.")
     st.stop()

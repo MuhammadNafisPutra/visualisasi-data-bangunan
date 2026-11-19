@@ -292,7 +292,7 @@ def g7_garis(d, tinggi=340, fs=12, ringkas=False):
 
 def sumber_teks(d):
     """Teks sumber data: seluruh data berasal dari survei lapangan (pengamatan langsung)."""
-    return "survei lapangan (pengamatan langsung)"
+    return "survei lapangan"
 
 
 def kpi(d):
