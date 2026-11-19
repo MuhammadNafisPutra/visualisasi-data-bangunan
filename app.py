@@ -271,9 +271,8 @@ st.markdown('<div class="strip" style="margin-top:1.4rem"></div>', unsafe_allow_
 with st.expander("Catatan data"):
     ex_b = int((~d[g.BAHAN].isin([g.KAYU, g.BATA])).sum())
     ex_l = int(d[g.LINGK].isna().sum())
-    lengkap = ("- Data lengkap: seluruh bangunan memiliki isian bahan dinding, kondisi fisik, status hunian, "
-               "dan kondisi lingkungan, sehingga semua bangunan dihitung pada setiap grafik dan insight.\n")
-    if ex_b or ex_l:
+    lengkap = ""   # data lengkap: tidak perlu catatan pengecualian
+    if ex_b or ex_l:   # hanya muncul bila ada data unggahan yang belum lengkap
         lengkap = ((f"- {ex_b} bangunan dengan bahan dinding belum dikonfirmasi tidak dihitung pada grafik 5, insight bahan dinding, dan KPI kayu/papan.\n" if ex_b else "")
                    + (f"- {ex_l} bangunan tanpa penilaian lingkungan tidak dihitung pada grafik 7 dan insight lingkungan.\n" if ex_l else ""))
     st.markdown(
