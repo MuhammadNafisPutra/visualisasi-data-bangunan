@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Peta 3D Kecamatan Banjarmasin</title>
+<style>__MAPLIBRE_CSS__</style>
+<style>
+__FONTS__
+/* tema sasirangan: warna sama dengan dashboard dan poster */
+:root{--paper:#F5EEE4;--rule:#DCCFC2;--crimson:#A31239;--maroon:#6B0B26;--ink:#2A1418;--muted:#76645F}
+html,body{margin:0;height:100%;overflow:hidden;font-family:'Source Sans 3','Source Sans Pro',Arial,sans-serif;background:var(--paper);color:var(--ink)}
+#map{position:absolute;inset:0}
+.box{position:absolute;background:#FFFFFF;border:1px solid var(--rule);border-radius:2px;box-shadow:0 4px 18px rgba(42,20,24,.22);padding:12px 14px;font-size:13px;color:var(--ink)}
+h1,h2,.big,.lab{font-family:Bitter,Georgia,serif}
+#top{top:10px;left:10px;width:262px;max-height:calc(100% - 70px);overflow:auto;padding:0}
+#top .hd{background:url(data:image/jpeg;base64,__MAROON__) center/cover;color:#fff;padding:7px 10px;display:flex;align-items:center;gap:8px}
+#top .hd .over{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#F2B7C3;font-weight:600;margin-bottom:3px}
+#top h1{font-size:14px;font-weight:700;margin:0;color:#fff;line-height:1.2;flex:1}
+.tog{cursor:pointer;color:#fff;border:1px solid rgba(255,255,255,.5);border-radius:2px;width:20px;height:20px;line-height:18px;text-align:center;font-size:14px;flex:none;user-select:none}
+.tog:hover{background:rgba(255,255,255,.15)}
+#top.min .bd,#top.min .strip{display:none}
+#top.min{width:auto}
+#top .hd div.sub{color:#F4D9DF;font-size:12.5px}
+.strip{height:8px;background:url(data:image/png;base64,__STRIP__) repeat-x left center/auto 100%}
+#top .bd{padding:6px 10px 8px}
+.lbl{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:4px 0 2px}
+.btn{display:inline-block;margin:3px 3px 0 0;padding:3px 7px;border-radius:2px;border:1px solid var(--rule);background:#fff;color:var(--ink);cursor:pointer;font-size:11.5px;font-weight:600}
+.btn:hover{border-color:var(--crimson)}
+.btn.on{background:var(--maroon);color:#fff;border-color:var(--maroon)}
+.btn.note{cursor:default;font-weight:400;color:var(--muted)}
+#banner{bottom:10px;left:10px;max-width:360px;font-size:11px;padding:4px 10px;background:var(--paper);border-left:4px solid var(--crimson);color:var(--ink)}
+#info{top:10px;right:10px;width:290px;max-height:calc(100% - 120px);overflow:auto;padding:0;transform:translateX(420px);transition:transform .45s cubic-bezier(.2,.9,.3,1.2)}
+#info.show{transform:none}
+#info .in{padding:6px 10px 8px;font-size:12.5px}
+#info h2{margin:0;font-size:14px;font-weight:700}
+.big{font-size:24px;font-weight:700;margin:0 0 4px;color:var(--maroon)}
+.big span{font-family:'Source Sans 3',Arial,sans-serif;color:var(--ink)}
+.bar{display:flex;height:10px;border-radius:2px;overflow:hidden;margin:4px 0 2px}
+.bar span{display:block;height:100%}
+.row{display:flex;justify-content:space-between;margin:3px 0;border-top:1px solid #F0E6DC;padding-top:3px}
+table{width:100%;border-collapse:collapse;margin-top:6px;font-size:12px}
+th{font-size:10.5px;color:var(--muted);font-weight:700;border-bottom:2px solid var(--ink)}
+td,th{padding:3px 2px;text-align:right;border-bottom:1px solid #F0E6DC}
+td:first-child,th:first-child{text-align:left}
+.lab{background:rgba(255,255,255,.82);border:1px solid var(--rule);border-radius:2px;padding:1px 6px;font-size:11px;transition:opacity .25s;font-weight:700;color:var(--ink);text-align:center;box-shadow:0 1px 5px rgba(42,20,24,.3);pointer-events:none;white-space:nowrap}
+.lab small{display:inline;margin-left:5px;font-family:'Source Sans 3',Arial,sans-serif;font-weight:500;font-size:9.5px;color:var(--muted)}
+.lab.sembunyi{visibility:hidden}
+.lab.redup{background:rgba(255,255,255,.45);color:rgba(42,20,24,.45);border-color:transparent;box-shadow:none}
+.lab.redup small{color:rgba(118,100,95,.5)}
+.top1{outline:2px solid var(--crimson);color:var(--crimson)}
+.rk{display:flex;justify-content:space-between;margin:1px 0;font-size:12px}
+.sw{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.legend{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);margin-top:6px}
+.legend i{flex:1;height:10px;background:linear-gradient(90deg,#F8E7E3,#C8553D);border:1px solid var(--rule)}
+#reset{float:right;cursor:pointer;color:#F4D9DF;font-size:12px;text-decoration:underline}
+#info .hd{background:url(data:image/jpeg;base64,__MAROON__) center/cover;color:#fff;padding:6px 10px}
+#info .hd div{font-size:11.5px}
+details>summary{cursor:pointer;font-weight:700;font-size:12px;list-style:none;padding:4px 0;color:var(--ink)}
+details>summary::-webkit-details-marker{display:none}
+details>summary:before{content:'';display:inline-block;width:0;height:0;margin:0 7px 1px 1px;border-left:6px solid var(--crimson);border-top:4px solid transparent;border-bottom:4px solid transparent;transition:transform .2s}
+details[open]>summary:before{transform:rotate(90deg)}
+.hint{font-size:11px;color:var(--muted);margin-top:4px}
+#info .hd h2{color:#fff}
+#info .hd div{color:#F4D9DF}
+</style></head><body>
+<div id="map"></div>
+<div id="top" class="box">
+ <div class="hd"><h1>Bangunan Banjarmasin 3D</h1>
+  <span class="tog" id="tog" title="Lipat / buka panel" onclick="lipat()">&minus;</span></div>
+ <div class="strip"></div>
+ <div class="bd">
+ <div id="metrics"></div>
+ <div class="hint">1 rumah berwarna = 10% bangunan. Klik kecamatan untuk rincian.</div>
+ <details id="rankBox" style="margin-top:4px;border-top:1px solid var(--rule)"><summary>Peringkat indikatif</summary><div id="rank"></div></details>
+ </div>
+</div>
+<div id="banner" class="box"><details><summary>Sumber &amp; catatan</summary>__BANNER__<div class="hint">Putar/miringkan peta: tahan klik kanan lalu seret.</div></details></div>
+<div id="info" class="box"></div>
+<script>__MAPLIBRE_JS__</script>
+<script>
+const DATA = __DATA__;            // agregat per kecamatan
+const GEO  = __GEOJSON__;         // poligon kecamatan
+const METRICS = {
+  rusak:   {label:'% Rusak',               key:'rusak'},
+  kosong:  {label:'% Kosong',              key:'kosong'},
+  rd:      {label:'% Rusak masih dihuni',  key:'rusak_dihuni'},
+  kayu:    {label:'% Bangunan kayu',       key:'kayu'},
+  lingb:   {label:'% Lingkungan buruk',    key:'ling_buruk'}
+};
+const RANKVARS = [   // indikator untuk peringkat indikatif (semakin kecil = semakin baik)
+  {key:'rusak',label:'% Rusak',on:true},
+  {key:'kayu',label:'% Bangunan kayu',on:true},
+  {key:'ling_buruk',label:'% Lingkungan buruk',on:true},
+  {key:'kosong',label:'% Kosong',on:false}
+];
+const N_RUMAH = 10;               // tiap kecamatan = 10 rumah Banjar, 1 rumah = 10%
+let metric = 'rd', selected = null, hovered = null, dirty = true;
+const st = {};                    // state animasi per kecamatan
+GEO.features.forEach(f=>{const k=f.properties.Kecamatan; st[k]={f:1,on:0,s:new Array(N_RUMAH).fill(0),dari:new Array(N_RUMAH).fill(0),ke:new Array(N_RUMAH).fill(0),t0:new Array(N_RUMAH).fill(0)}});
+
+function mix(hex, amt, g){ // campur warna (default: abu krem) untuk meredupkan
+  g=g||[232,224,214];
+  const c=[1,3,5].map(i=>parseInt(hex.substr(i,2),16));
+  return '#'+c.map((v,i)=>Math.round(v*(1-amt)+g[i]*amt).toString(16).padStart(2,'0')).join('');
+}
+function gelap(hex, amt){ return mix(hex, amt, [42,20,24]); }
+
+/* ---------- posisi 10 rumah (2 baris x 5 kolom) di dalam tiap kecamatan ---------- */
+function dalam(pt, g){ // titik di dalam poligon (ray casting)
+  const polys = g.type==='Polygon'?[g.coordinates]:g.coordinates;
+  return polys.some(p=>{let ins=false; const r=p[0];
+    for(let i=0,j=r.length-1;i<r.length;j=i++){const xi=r[i][0],yi=r[i][1],xj=r[j][0],yj=r[j][1];
+      if(((yi>pt[1])!==(yj>pt[1])) && (pt[0] < (xj-xi)*(pt[1]-yi)/(yj-yi)+xi)) ins=!ins;}
+    return ins;});
+}
+const M2LON = m => m/(111320*Math.cos(3.32*Math.PI/180)), M2LAT = m => m/110540;
+const POS = {};
+function susun(c, sk){ const dx=740*sk, dy=960*sk, pts=[];
+  for(let r=0;r<2;r++) for(let q=0;q<5;q++) pts.push([c[0]+M2LON((q-2)*dx), c[1]+M2LAT((0.5-r)*dy)]);
+  return pts; }
+function muat(c, sk, g){   // seluruh susunan (dengan tepi rumah) ada di dalam kecamatan
+  const m=0.35*740*sk;
+  return susun(c,sk).every(p=>dalam(p,g) && dalam([p[0]+M2LON(m),p[1]],g) && dalam([p[0]-M2LON(m),p[1]],g)
+    && dalam([p[0],p[1]+M2LAT(m)],g) && dalam([p[0],p[1]-M2LAT(m)],g));
+}
+function bbox(g){ const polys=g.type==='Polygon'?[g.coordinates]:g.coordinates; let b=[1e9,1e9,-1e9,-1e9];
+  polys.forEach(p=>p[0].forEach(([x,y])=>{b=[Math.min(b[0],x),Math.min(b[1],y),Math.max(b[2],x),Math.max(b[3],y)]})); return b; }
+const SKALA_TERBAIK = {};
+GEO.features.forEach(f=>{   // cari titik pusat susunan yang muat untuk ukuran terbesar
+  const k=f.properties.Kecamatan, g=f.geometry, b=bbox(g), c0=centroid(g);
+  let terbaik={sk:0,c:c0};
+  for(let sk=1; sk>0.3 && !terbaik.sk; sk*=0.92){
+    const cand=[c0];
+    for(let x=b[0];x<=b[2];x+=M2LON(250)) for(let y=b[1];y<=b[3];y+=M2LAT(250)) cand.push([x,y]);
+    cand.sort((p,q)=>Math.hypot(p[0]-c0[0],p[1]-c0[1])-Math.hypot(q[0]-c0[0],q[1]-c0[1]));   // utamakan dekat pusat
+    const ok=cand.find(c=>muat(c,sk,g)); if(ok) terbaik={sk:sk,c:ok};
+  }
+  SKALA_TERBAIK[k]=terbaik.sk ? terbaik : {sk:0.3,c:c0};
+});
+const SK = Math.min(...Object.values(SKALA_TERBAIK).map(x=>x.sk));   // ukuran rumah sama di semua kecamatan
+GEO.features.forEach(f=>{ const k=f.properties.Kecamatan, g=f.geometry;
+  let c=SKALA_TERBAIK[k].c;
+  if(!muat(c,SK,g)){ const b=bbox(g), c0=centroid(g), cand=[];
+    for(let x=b[0];x<=b[2];x+=M2LON(200)) for(let y=b[1];y<=b[3];y+=M2LAT(200)) cand.push([x,y]);
+    cand.sort((p,q)=>Math.hypot(p[0]-c0[0],p[1]-c0[1])-Math.hypot(q[0]-c0[0],q[1]-c0[1]));
+    c=cand.find(p=>muat(p,SK,g))||c; }
+  POS[k]={pts:susun(c,SK), sk:SK, c:c};
+});
+
+/* ---------- bentuk rumah Banjar (bubungan tinggi) dari potongan fill-extrusion ---------- */
+// koordinat lokal dalam meter: x = lebar (timur-barat), y = panjang (depan-belakang), z = tinggi
+function kotak(c, x0,x1,y0,y1, z0,z1, warna, k, lapis){
+  const p=[[x0,y0],[x1,y0],[x1,y1],[x0,y1],[x0,y0]].map(v=>[c[0]+M2LON(v[0]), c[1]+M2LAT(v[1])]);
+  return {type:'Feature',geometry:{type:'Polygon',coordinates:[p]},properties:{k:k,b:z0,h:z1,color:warna,lapis:lapis}};
+}
+function rumah(out, c, s, sk, warnaBadan, warnaAtap, k, lapis){
+  const W=400*sk, L=500*sk, T=s*1.25*sk;   // tinggi ikut sk supaya proporsi rumah sama di semua kecamatan                     // T = skala tinggi (0..1+)
+  const zT=55*T, zB=zT+190*T;                        // tiang, lalu badan rumah
+  // tiang (rumah panggung)
+  [[-1,-1],[1,-1],[-1,1],[1,1],[0,-1],[0,1]].forEach(([a,b])=>{
+    const x=a*(W/2-14*sk), y=b*(L/2-14*sk);
+    out.push(kotak(c, x-9*sk,x+9*sk, y-9*sk,y+9*sk, 0,zT, gelap(warnaBadan,.45), k, lapis));
+  });
+  out.push(kotak(c, -W/2,W/2, -L/2,L/2, zT,zB, warnaBadan, k, lapis));                       // badan
+  out.push(kotak(c, -W/2-W*.32,W/2+W*.32, -L*.14,L*.14, zT,zB-45*T, warnaBadan, k, lapis));   // anjung kiri-kanan
+  out.push(kotak(c, -W*.38,W*.38, L/2,L/2+L*.26, zT,zB-70*T, warnaBadan, k, lapis));          // serambi depan
+  // atap bubungan tinggi: bertingkat makin sempit, sangat curam
+  const n=14, dz=24*T;   // atap kira-kira setinggi lebar rumah
+  for(let i=0;i<n;i++){
+    const t=i/n, hw=(W/2+22*sk)*(1-Math.pow(t,0.85)*.94), hl=(L/2+20*sk)*(1-t*.28);
+    out.push(kotak(c, -hw,hw, -hl,hl, zB+i*dz, zB+(i+1)*dz, warnaAtap, k, lapis));
+  }
+  out.push(kotak(c, -6*sk,6*sk, -(L/2)*.74,(L/2)*.74, zB+n*dz, zB+n*dz+22*T, gelap(warnaAtap,.3), k, lapis));  // bubungan
+  // atap anjung dan atap serambi (lebih landai)
+  for(let i=0;i<3;i++){
+    const t=i/3, z0=zB-45*T+i*30*T, z1=z0+30*T, hy=L*.16*(1-t*.3);
+    out.push(kotak(c, -W/2-W*.34, -W/2-W*.34+W*.30*(1-t*.6), -hy,hy, z0,z1, warnaAtap, k, lapis));
+    out.push(kotak(c, W/2+W*.34-W*.30*(1-t*.6), W/2+W*.34, -hy,hy, z0,z1, warnaAtap, k, lapis));
+    const s0=zB-70*T+i*28*T;
+    out.push(kotak(c, -W*.40*(1-t*.5),W*.40*(1-t*.5), L/2, L/2+L*.28*(1-t*.5), s0, s0+28*T, warnaAtap, k, lapis));
+  }
+}
+function feats(){
+  const out=[];
+  GEO.features.forEach(f=>{
+    const k=f.properties.Kecamatan, s=st[k], d=DATA[k], P=POS[k];
+    const dim = selected && selected!==k ? 0.6 : (hovered && hovered!==k && !selected ? 0.3 : 0);
+    const badanOn=mix(d.color,dim), atapOn=mix(gelap(d.color,.45),dim);
+    for(let i=0;i<N_RUMAH;i++){
+      const on = i < s.on, sc = s.s[i];   // ukuran rumah tetap; sorotan cukup lewat warna
+      if(sc < 0.02) continue;
+      if(on) rumah(out, P.pts[i], sc, P.sk, badanOn, atapOn, k, 'on');
+      else   rumah(out, P.pts[i], sc, P.sk, mix('#EFE7DC',dim*.3), mix('#B9A99A',dim*.3), k, 'off');
+    }
+  });
+  return {type:'FeatureCollection',features:out};
+}
+function areaFeats(){
+  return {type:'FeatureCollection',features:GEO.features.map(f=>{
+    const k=f.properties.Kecamatan, dim = selected && selected!==k ? 0.7 : 0;
+    return {type:'Feature',geometry:f.geometry,properties:{k:k,color:mix(DATA[k].color,dim)}};
+  })};
+}
+const map = new maplibregl.Map({
+  container:'map', center:[114.598,-3.318], zoom:11.9, pitch:58, bearing:-18, maxPitch:75,
+  style:{version:8,sources:{base:{type:'raster',tileSize:256,
+      tiles:['https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}'],
+      attribution:'Tiles &copy; Esri'}},
+    layers:[{id:'bg',type:'background',paint:{'background-color':'#dfe6ee'}},{id:'base',type:'raster',source:'base'}]}
+});
+map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'bottom-right');
+const markers = {};
+setMetric('rd',true);   // panel indikator dan peringkat langsung tampil, tanpa menunggu ubin peta
+let markerSiap=false, loopJalan=false;
+function pasang(){   // aman dipanggil berulang; dicoba saat style.load lalu dipastikan lagi saat load
+  if(map.getSource('rumah')) return;
+  map.addSource('kec',{type:'geojson',data:areaFeats()});
+  map.addSource('rumah',{type:'geojson',data:feats()});
+  map.addLayer({id:'area',type:'fill',source:'kec',paint:{'fill-color':['get','color'],'fill-opacity':0.28}});
+  map.addLayer({id:'ground',type:'line',source:'kec',paint:{'line-color':'#ffffff','line-width':2.5}});
+  map.addLayer({id:'rumah-off',type:'fill-extrusion',source:'rumah',filter:['==',['get','lapis'],'off'],paint:{
+     'fill-extrusion-color':['get','color'],'fill-extrusion-height':['get','h'],
+     'fill-extrusion-base':['get','b'],'fill-extrusion-opacity':0.75}});
+  map.addLayer({id:'rumah-on',type:'fill-extrusion',source:'rumah',filter:['==',['get','lapis'],'on'],paint:{
+     'fill-extrusion-color':['get','color'],'fill-extrusion-height':['get','h'],
+     'fill-extrusion-base':['get','b'],'fill-extrusion-opacity':0.97}});
+  dirty=true;
+  if(markerSiap) return; markerSiap=true;
+  GEO.features.forEach(f=>{
+    const k=f.properties.Kecamatan, el=document.createElement('div'); el.className='lab';
+    const P=POS[k].pts, depan=[(P[5][0]+P[9][0])/2, P[5][1]-M2LAT(380*POS[k].sk)];
+    const mk=new maplibregl.Marker({element:el,anchor:'top'}).setLngLat(depan).addTo(map); markers[k]={mk,el};
+  });
+  setMetric('rd',true);
+  if(!loopJalan){ loopJalan=true; loop(); }
+}
+map.on('style.load',pasang); map.on('load',pasang); map.on('idle',pasang);
+function centroid(g){ // sentroid poligon terbesar (rumus shoelace)
+  const polys = g.type==='Polygon'?[g.coordinates]:g.coordinates; let best=null,ba=-1;
+  polys.forEach(p=>{const r=p[0];let a=0,cx=0,cy=0;
+    for(let i=0;i<r.length-1;i++){const t=r[i][0]*r[i+1][1]-r[i+1][0]*r[i][1];a+=t;cx+=(r[i][0]+r[i+1][0])*t;cy+=(r[i][1]+r[i+1][1])*t}
+    a/=2; if(Math.abs(a)>ba){ba=Math.abs(a);best=[cx/(6*a),cy/(6*a)]}});
+  return best;
+}
+function setMetric(m,first){
+  metric=m; const key=METRICS[m].key;
+  renderRank();
+  const now=performance.now();
+  Object.keys(st).forEach((k,ki)=>{ const s=st[k]; s.on=Math.round(DATA[k][key]/10); if(first) s.s.fill(0);
+    for(let i=0;i<N_RUMAH;i++){ s.dari[i]=s.s[i]; s.ke[i]= i<s.on ? 1 : 0.42;
+      s.t0[i]= now + (first ? ki*150 : 0) + i*45; } });   // rumah tumbuh satu per satu
+  Object.keys(markers).forEach(k=>{
+    const d=DATA[k];
+    markers[k].el.innerHTML=short(k)+' <b>'+d[key].toFixed(0)+'%</b><small>'+st[k].on+'/10 rumah</small>';
+  });
+  const maxK=Object.keys(DATA).reduce((a,b)=>DATA[a][key]>=DATA[b][key]?a:b);
+  Object.keys(markers).forEach(k=>{ markers[k].el.classList.toggle('top1',k===maxK);
+    if(k===maxK) markers[k].el.innerHTML='&#9650; '+markers[k].el.innerHTML; });
+  document.getElementById('metrics').innerHTML=Object.keys(METRICS).map(x=>
+    '<span class="btn '+(x===m?'on':'')+'" onclick="setMetric(\''+x+'\')">'+METRICS[x].label+'</span>').join('');
+  dirty=true;
+  if(selected) showInfo(selected);
+}
+function short(k){return k.replace('Banjarmasin ','')}
+function p0(v){return v===null||v===undefined?'&ndash;':v.toFixed(0)+'%'}
+let tAkhir=performance.now(), tData=0;
+const DURASI=650, mulus=x=>1-Math.pow(1-x,3);   // animasi berbasis waktu: sama cepat di komputer lambat
+function loop(){
+  const now=performance.now(), dt=Math.min((now-tAkhir)/1000,0.1); tAkhir=now;
+  let moving=false;
+  Object.keys(st).forEach(k=>{
+    const s=st[k];
+    for(let i=0;i<N_RUMAH;i++){
+      const u=Math.max(0,Math.min(1,(now-s.t0[i])/DURASI));
+      s.s[i]=s.dari[i]+(s.ke[i]-s.dari[i])*mulus(u);
+      if(u<1) moving=true;
+    }
+  });
+  if((moving || dirty) && now-tData>65){
+    const src=map.getSource('rumah');
+    if(src){ src.setData(feats()); map.getSource('kec').setData(areaFeats()); dirty=false; tData=now; }
+  }
+  requestAnimationFrame(loop);
+}
+function kecDi(pt){
+  const fs=map.queryRenderedFeatures(pt,{layers:['rumah-on','rumah-off','area']});
+  return fs.length ? fs[0].properties.k : null;
+}
+map.on('click',e=>{
+  const k=kecDi(e.point);
+  selected = k ? (selected===k ? null : k) : null; dirty=true; aturLabel();
+  if(selected){ showInfo(selected); fly(selected); } else { hideInfo(); resetView(); }
+});
+map.on('mousemove',e=>{
+  const k=kecDi(e.point); if(k!==hovered){ hovered=k; dirty=true; }
+  map.getCanvas().style.cursor = hovered?'pointer':'';
+});
+function fly(k){
+  const f=GEO.features.find(x=>x.properties.Kecamatan===k), c=centroid(f.geometry);
+  map.flyTo({center:c, zoom:12.9, pitch:55, bearing:-30, duration:1400, essential:true});
+}
+function resetView(){ map.flyTo({center:[114.598,-3.318],zoom:11.9,pitch:58,bearing:-18,duration:1200}); }
+function hideInfo(){ document.getElementById('info').classList.remove('show'); }
+function showInfo(k){
+  const d=DATA[k], el=document.getElementById('info');
+  el.innerHTML='<div class="hd"><span id="reset" onclick="selected=null;dirty=true;aturLabel();hideInfo();resetView()">tutup</span>'
+   +'<h2><span class="sw" style="background:'+d.color+';box-shadow:0 0 0 1px #fff"></span>'+k+'</h2>'
+   +'<div>'+d.n+' bangunan sampel</div></div><div class="in">'
+   +'<div class="big">'+d[METRICS[metric].key].toFixed(1)+'%<span style="font-size:12px;font-weight:400"> '+METRICS[metric].label.replace('% ','')+'</span></div>'
+   +'<div>Kondisi fisik</div><div class="bar"><span style="width:'+d.baik+'%;background:#4C9F70"></span><span style="width:'+d.sedang+'%;background:#F2B84B"></span><span style="width:'+d.rusak+'%;background:#C8553D"></span></div>'
+   +'<div style="font-size:11.5px;color:#76645F">Baik '+d.baik.toFixed(0)+'% &middot; Sedang '+d.sedang.toFixed(0)+'% &middot; Rusak '+d.rusak.toFixed(0)+'%</div>'
+   +'<div class="row" style="margin-top:8px"><span>Kosong</span><b>'+d.kosong.toFixed(1)+'%</b></div>'
+   +'<div class="row"><span>Rusak &amp; masih dihuni</span><b>'+d.rusak_dihuni.toFixed(1)+'%</b></div>'
+   +'<div class="row"><span>Bangunan berbahan kayu</span><b>'+d.kayu.toFixed(1)+'%</b></div>'
+   +'<div style="margin-top:6px">Lingkungan sekitar</div><div class="bar"><span style="width:'+d.ling_baik+'%;background:#4C9F70"></span><span style="width:'+(100-d.ling_baik-d.ling_buruk)+'%;background:#F2B84B"></span><span style="width:'+d.ling_buruk+'%;background:#C8553D"></span></div>'
+   +'<div style="font-size:11.5px;color:#76645F">Baik '+d.ling_baik.toFixed(0)+'% &middot; Sedang '+(100-d.ling_baik-d.ling_buruk).toFixed(0)+'% &middot; Buruk '+d.ling_buruk.toFixed(0)+'%</div>'
+   +(d.kel.length?'<details id="kelBox" '+(kelBuka?'open':'')+' ontoggle="kelBuka=this.open" style="margin-top:6px;border-top:1px solid var(--rule)"><summary>Rincian per kelurahan ('+d.kel.length+')</summary>'
+   +'<div style="font-size:11px;color:#76645F">Dari data tim survei ('+d.n_kel+' dari '+d.n+' bangunan). &#9888; = kurang dari 10 bangunan, baca hati-hati.</div>'
+   +'<table><tr><th>Kelurahan</th><th>n</th><th>Rusak</th><th>Rusak dihuni</th><th>Kayu</th><th>Ling. buruk</th></tr>'
+   +d.kel.map(x=>'<tr><td>'+x.nama+(x.n<10?' &#9888;':'')+'</td><td>'+x.n+'</td><td>'+p0(x.rusak)+'</td><td>'+p0(x.rd)+'</td><td>'+p0(x.kayu)+'</td><td>'+p0(x.ling_buruk)+'</td></tr>').join('')
+   +'</table></details>':'<div style="margin-top:8px;font-size:11.5px;color:#76645F">Data tidak memuat kolom kelurahan, jadi rincian per kelurahan tidak tersedia.</div>')+'</div>';
+  el.classList.add('show');
+}
+function lipat(){ const el=document.getElementById('top'), m=el.classList.toggle('min');
+  document.getElementById('tog').innerHTML = m ? '+' : '&minus;'; }
+let kelBuka=false;
+function aturLabel(){   // label tidak menutupi rumah: redup/sembunyi saat zoom dekat atau saat kecamatan dipilih
+  const z=map.getZoom();
+  Object.keys(markers).forEach(k=>{ const el=markers[k].el;
+    const pilih = selected===k, lain = selected && !pilih;
+    el.classList.toggle('sembunyi', (z>13.3 && !pilih) || (lain && z>12.4));
+    el.classList.toggle('redup', !!lain && z<=12.4);
+  });
+}
+map.on('zoom', aturLabel);
+function renderRank(){
+  const on=RANKVARS.filter(v=>v.on);
+  const rows=Object.keys(DATA).map(k=>({k:k,s:on.length?on.reduce((a,v)=>a+DATA[k][v.key],0)/on.length:0})).sort((a,b)=>a.s-b.s);
+  document.getElementById('rank').innerHTML='<div class="hint" style="margin:0 0 3px">Skor = rata-rata indikator terpilih, makin kecil makin baik.</div><div style="margin:2px 0 4px">'
+   +RANKVARS.map((v,i)=>'<label style="display:inline-block;margin-right:8px;font-size:11.5px"><input type="checkbox" '+(v.on?'checked':'')+' onchange="RANKVARS['+i+'].on=this.checked;renderRank()"> '+v.label+'</label>').join('')+'</div>'
+   +rows.map((r,i)=>'<div class="rk"><span>'+(i+1)+'. <span class="sw" style="background:'+DATA[r.k].color+'"></span>'+short(r.k)+'</span><b>'+r.s.toFixed(1)+'</b></div>').join('')
+   +'<div style="font-size:10.5px;color:#8A4B12;margin-top:4px">BUKAN rekomendasi tempat tinggal; tidak mencakup banjir, harga, akses, dan fasilitas.</div>';
+}
+window.selectKec=function(k){selected=k;dirty=true;aturLabel();showInfo(k);fly(k)};
+</script></body></html>

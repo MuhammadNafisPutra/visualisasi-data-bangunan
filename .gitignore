@@ -17,3 +17,6 @@ poster/poster.html
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Peta 3D: salinan kerja (versi yang diterbitkan ada di docs/peta-3d/index.html)
+peta_3d/output/

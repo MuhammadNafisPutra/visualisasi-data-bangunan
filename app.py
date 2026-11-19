@@ -24,6 +24,9 @@ esc = html.escape
 
 st.set_page_config(page_title="Dashboard Bangunan Banjarmasin", page_icon=str(Path(__file__).parent / "assets" / "logo.png"), layout="wide")
 
+# ---- peta 3D interaktif: halaman terpisah di GitHub Pages (dibuat oleh peta_3d/buat_peta3d.py) ----
+URL_PETA_3D = "https://muhammadnafisputra.github.io/visualisasi-data-bangunan/peta-3d/"
+
 
 @st.cache_data
 def b64(nama):
@@ -212,6 +215,12 @@ with c3, st.container(border=True):
             st.caption("Dihitung dari bangunan yang kondisi lingkungannya tercatat. Lingkungan rusak = tumpukan sampah, semak lebat, genangan, atau wadah berair.")
     else:
         st.info("File zona kecamatan tidak ditemukan, jadi peta tidak ditampilkan.")
+    st.markdown(
+            f'<a href="{URL_PETA_3D}" target="_blank" rel="noopener" style="display:inline-block;margin-top:.3rem;padding:.4rem .9rem;'
+            f'background:{MAROON};color:#fff;text-decoration:none;border-radius:2px;font-weight:600;font-size:.9rem">'
+            'Buka peta 3D interaktif (rumah Banjar) &#8599;</a>'
+            f'<div style="font-size:.78rem;color:{MUTED};margin-top:.25rem">Peta 3D memakai data lengkap, belum mengikuti filter di samping.</div>',
+            unsafe_allow_html=True)
 with c4, st.container(border=True):
     judul_grafik(4, "Kondisi fisik menurut status hunian",
                  "Apakah bangunan kosong lebih rusak daripada bangunan yang dihuni? Angka di tengah = % rusak.")

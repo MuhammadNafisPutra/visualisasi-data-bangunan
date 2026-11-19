@@ -1,6 +1,8 @@
 # Kondisi Fisik dan Status Hunian Bangunan di Kota Banjarmasin
 
-Dashboard, insight, dan poster A3 tentang kondisi bangunan di lima kecamatan Kota Banjarmasin, dari survei lapangan.
+Dashboard, peta 3D interaktif, insight, dan poster A3 tentang kondisi bangunan di lima kecamatan Kota Banjarmasin, dari survei lapangan.
+
+- Peta 3D interaktif (rumah Banjar): https://muhammadnafisputra.github.io/visualisasi-data-bangunan/peta-3d/
 Hasil dibaca sebagai indikasi awal, bukan bukti sebab-akibat.
 
 ![Poster A3](docs/preview_poster.jpg)
@@ -19,7 +21,7 @@ Variabel:
 Kecamatan, Kelurahan (data tim), Jenis Bangunan, Bahan Dinding, Kondisi Fisik, Status Hunian, Kondisi Lingkungan Sekitar.
 
 ## Tools
-Python (pandas, NumPy), Plotly, Streamlit, Shapely, Playwright.
+Python (pandas, NumPy), Plotly, Streamlit, MapLibre GL JS, Shapely, Playwright.
 
 ## Menjalankan
 ```
@@ -27,6 +29,7 @@ pip install -r requirements.txt
 streamlit run app.py                 # dashboard
 playwright install chromium          # sekali saja, untuk poster
 python buat_poster.py                # poster/poster.pdf, poster.png, poster.html
+python peta_3d/buat_peta3d.py        # peta 3D -> docs/peta-3d/index.html (GitHub Pages)
 ```
 
 ## Struktur
@@ -35,6 +38,8 @@ python buat_poster.py                # poster/poster.pdf, poster.png, poster.htm
 - `grafik.py` : 7 visualisasi, dipakai bersama oleh dashboard dan poster.
 - `buat_poster.py` : poster A3 dari data dan insight yang sama.
 - `data/kecamatan_perkiraan.geojson` : zona kecamatan PERKIRAAN (Voronoi), bukan batas resmi.
+- `peta_3d/` : pembuat peta 3D interaktif (MapLibre GL): tiap kecamatan = 10 rumah Banjar, 1 rumah berwarna = 10% bangunan.
+- `docs/peta-3d/index.html` : peta 3D yang diterbitkan lewat GitHub Pages; tautannya ada di bawah grafik peta dashboard.
 - `poster/` : poster A3 hasil jadi (`poster.pdf`, `poster.png`); `poster.html` dibuat ulang oleh `buat_poster.py`.
 - `docs/` : gambar pratinjau poster untuk README.
 - `assets/` : potongan motif sasirangan, font Bitter dan Source Sans 3 (lisensi SIL OFL).
